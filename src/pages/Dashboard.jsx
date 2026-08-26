@@ -278,7 +278,7 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <button className="ref-round-action-btn" onClick={() => navigate('/intake')} title="Edit Sprint">
+                  <button className="ref-round-action-btn" aria-label="Edit Sprint 1 milestones" onClick={() => navigate('/intake')} title="Edit Sprint">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                       <polyline points="9 18 15 12 9 6"/>
                     </svg>
@@ -301,7 +301,7 @@ export default function Dashboard() {
                     <div className="ref-project-rate">Milestone: Interactive DOM apps & state logic</div>
                   </div>
 
-                  <button className="ref-round-action-btn" onClick={() => navigate('/intake')}>
+                  <button className="ref-round-action-btn" aria-label="View JavaScript Fundamentals sprint" onClick={() => navigate('/intake')}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                       <polyline points="9 18 15 12 9 6"/>
                     </svg>
@@ -325,7 +325,7 @@ export default function Dashboard() {
                     <div className="ref-project-rate">Milestone: Real-world API integration & state containers</div>
                   </div>
 
-                  <button className="ref-round-action-btn" onClick={() => navigate('/intake')}>
+                  <button className="ref-round-action-btn" aria-label="View Async APIs sprint" onClick={() => navigate('/intake')}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                       <polyline points="9 18 15 12 9 6"/>
                     </svg>
