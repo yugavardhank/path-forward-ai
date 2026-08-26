@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
+    "lint:check": "oxlint",
     "test": "node --test --experimental-test-coverage test/**/*.test.js",
+    "audit": "npm audit --audit-level=high",
     "preview": "vite preview"
   },
   "dependencies": {

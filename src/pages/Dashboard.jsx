@@ -352,7 +352,14 @@ export default function Dashboard() {
                 {mentors.map((m) => (
                   <div key={m.name} className="ref-connect-row">
                     <div className="ref-connect-avatar-img">
-                      <img src={m.avatar} alt={m.name} />
+                      <img
+                        src={m.avatar}
+                        alt={`Mentor ${m.name}`}
+                        width="38"
+                        height="38"
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </div>
                     <div className="ref-connect-meta">
                       <div className="ref-connect-name-row">
@@ -364,6 +371,7 @@ export default function Dashboard() {
                     <button
                       className="ref-round-action-btn"
                       title="Ask mentor a question"
+                      aria-label={`Ask ${m.name} a question`}
                       onClick={() => setChatOpen(true)}
                     >
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">

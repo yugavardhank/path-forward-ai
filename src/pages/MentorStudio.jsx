@@ -117,7 +117,11 @@ export default function MentorStudio() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 10 }}>
                 {/* Alex Chen */}
                 <div
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Switch to Alex Chen - Technical Architect"
                   onClick={() => setActiveMentor('alex')}
+                  onKeyDown={(e) => e.key === 'Enter' && setActiveMentor('alex')}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -131,7 +135,11 @@ export default function MentorStudio() {
                 >
                   <img
                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
-                    alt="Alex Chen"
+                    alt="Alex Chen portrait"
+                    width="34"
+                    height="34"
+                    loading="lazy"
+                    decoding="async"
                     style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover' }}
                   />
                   <div>
@@ -142,7 +150,11 @@ export default function MentorStudio() {
 
                 {/* Elena Rostova */}
                 <div
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Switch to Elena Rostova - Career Strategist"
                   onClick={() => setActiveMentor('elena')}
+                  onKeyDown={(e) => e.key === 'Enter' && setActiveMentor('elena')}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -156,7 +168,11 @@ export default function MentorStudio() {
                 >
                   <img
                     src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80"
-                    alt="Elena Rostova"
+                    alt="Elena Rostova portrait"
+                    width="34"
+                    height="34"
+                    loading="lazy"
+                    decoding="async"
                     style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover' }}
                   />
                   <div>
