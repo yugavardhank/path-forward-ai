@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { DEFAULT_ROADMAP } from '../data/defaultRoadmap';
@@ -38,16 +38,16 @@ export default function Roadmap() {
     if (setRoadmap) setRoadmap(next);
   };
 
-  const total = blocks.reduce((s, b) => s + b.tasks.length, 0);
-  const done = blocks.reduce((s, b) => s + b.tasks.filter(t => t.done).length, 0);
-  const pct = total ? Math.round((done / total) * 100) : 0;
+  const total = useMemo(() => blocks.reduce((s, b) => s + b.tasks.length, 0), [blocks]);
+  const done = useMemo(() => blocks.reduce((s, b) => s + b.tasks.filter(t => t.done).length, 0), [blocks]);
+  const pct = useMemo(() => total ? Math.round((done / total) * 100) : 0, [total, done]);
 
-  const filteredBlocks = blocks.filter(b => {
+  const filteredBlocks = useMemo(() => blocks.filter(b => {
     const isCompleted = b.tasks.every(t => t.done);
     if (filter === 'active') return b.active;
     if (filter === 'completed') return isCompleted;
     return true;
-  });
+  }), [blocks, filter]);
 
   return (
     <div className="ref-outer-viewport">
@@ -238,7 +238,7 @@ export default function Roadmap() {
                   <a
                     href={block.resource.url}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     style={{ color: '#f25a38', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}
                   >
                     📚 {block.resource.name} <LinkIcon />

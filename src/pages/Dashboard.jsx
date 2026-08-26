@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/useApp';
 import { DEFAULT_ROADMAP } from '../data/defaultRoadmap';
@@ -47,13 +47,13 @@ export default function Dashboard() {
     },
   ];
 
-  // Dynamic calculations from real roadmap state
-  const totalTasks = blocks.reduce((s, b) => s + b.tasks.length, 0);
-  const doneTasks = blocks.reduce((s, b) => s + b.tasks.filter(t => t.done).length, 0);
-  const completionPct = totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0;
-  const activeBlock = blocks.find(b => b.active) || blocks[0];
-  const hoursLogged = 12 + (doneTasks * 6);
-  const skillsMastered = Math.max(2, Math.floor(doneTasks * 1.5) + 2);
+  // Dynamic calculations from real roadmap state (memoized for efficiency)
+  const totalTasks = useMemo(() => blocks.reduce((s, b) => s + b.tasks.length, 0), [blocks]);
+  const doneTasks = useMemo(() => blocks.reduce((s, b) => s + b.tasks.filter(t => t.done).length, 0), [blocks]);
+  const completionPct = useMemo(() => totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0, [totalTasks, doneTasks]);
+  const activeBlock = useMemo(() => blocks.find(b => b.active) || blocks[0], [blocks]);
+  const hoursLogged = useMemo(() => 12 + (doneTasks * 6), [doneTasks]);
+  const skillsMastered = useMemo(() => Math.max(2, Math.floor(doneTasks * 1.5) + 2), [doneTasks]);
 
   // Toggle tasks inside roadmap
   const toggleTask = (blockId, taskId) => {
