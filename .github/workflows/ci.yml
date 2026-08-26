@@ -1,0 +1,37 @@
+name: PathForward CI & Quality Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    name: Lint, Test, Security & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js v20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Code Quality Linter
+        run: npm run lint
+
+      - name: Run Automated Test Suite with Coverage
+        run: npm test
+
+      - name: Run Dependency Security Audit
+        run: npm audit --audit-level=high
+
+      - name: Build Production Bundle
+        run: npm run build
