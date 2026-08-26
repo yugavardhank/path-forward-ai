@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useApp } from '../context/useApp';
 import { sendMentorMessage, isAIEnabled } from '../lib/gemini';
 
 const SendIcon = () => (
@@ -48,6 +49,7 @@ function pick(msg) {
 }
 
 export default function MentorChat({ blocks = [], initialOpen = false }) {
+  const { userData } = useApp() || {};
   const [open, setOpen] = useState(initialOpen);
   const [msgs, setMsgs] = useState([
     {
@@ -58,8 +60,8 @@ export default function MentorChat({ blocks = [], initialOpen = false }) {
   ]);
   const [input, setInput] = useState('');
   const [typing, setTyping] = useState(false);
+  const nextId = useRef(2);
   const endRef = useRef();
-
 
   useEffect(() => {
     if (open) {
@@ -69,17 +71,17 @@ export default function MentorChat({ blocks = [], initialOpen = false }) {
 
   const send = async (text) => {
     if (!text.trim() || typing) return;
-    setMsgs(m => [...m, { id: Date.now(), role: 'user', text }]);
+    setMsgs(m => [...m, { id: nextId.current++, role: 'user', text }]);
     setInput('');
     setTyping(true);
 
-    let reply = isAIEnabled() ? await sendMentorMessage(text, blocks, msgs) : null;
+    let reply = isAIEnabled() ? await sendMentorMessage(text, blocks, msgs, 'alex', userData) : null;
     if (!reply) {
       await new Promise(r => setTimeout(r, 600));
       reply = pick(text);
     }
 
-    setMsgs(m => [...m, { id: Date.now() + 1, role: 'ai', text: reply }]);
+    setMsgs(m => [...m, { id: nextId.current++, role: 'ai', text: reply }]);
     setTyping(false);
   };
 

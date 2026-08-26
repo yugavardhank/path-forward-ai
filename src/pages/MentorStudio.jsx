@@ -46,21 +46,36 @@ export default function MentorStudio() {
 
     let reply = null;
     if (isAIEnabled()) {
-      reply = await sendMentorMessage(text, blocks, messages);
+      reply = await sendMentorMessage(text, blocks, messages, activeMentor, userData);
     }
 
     if (!reply) {
-      // Intelligent fallback tailored to persona
-      await new Promise(r => setTimeout(r, 700));
+      // Intelligent persona-specific fallback
+      await new Promise(r => setTimeout(r, 600));
       const lower = text.toLowerCase();
-      if (lower.includes('stuck') || lower.includes('flexbox') || lower.includes('grid')) {
-        reply = "For CSS layout in Week 1, focus on the parent-child relationship: set `display: flex` on the container, then use `justify-content` along the main axis and `align-items` along the cross axis. Don't worry about memorizing every property yet — build your portfolio structure section by section (Navbar, Hero, Projects grid). Would you like a snippet?";
-      } else if (lower.includes('github') || lower.includes('repo')) {
-        reply = "Recruiters look for 3 things in entry-level repos: 1) A clear README with a live preview link (Vercel/GitHub Pages), 2) Small, descriptive commit messages showing your thought process, and 3) Clean, commented code. Start pushing daily from Day 1!";
-      } else if (lower.includes('interview')) {
-        reply = "Here are 3 core questions for your current phase:\n1. What is the difference between inline and block elements in HTML?\n2. How does the CSS box model calculate total element width?\n3. Why is semantic HTML important for accessibility (a11y) and SEO?\nTry answering the first one!";
+
+      if (activeMentor === 'elena') {
+        // Elena Rostova — Career Strategist
+        if (lower.includes('stuck') || lower.includes('degree') || lower.includes('dropout') || lower.includes('gap')) {
+          reply = `As a career strategist, remember that modern tech teams hire for proof-of-work, not university credentials. In your current sprint (${activeBlock.label}), your sole focus is achieving milestone: "${activeBlock.milestone}". Once you have that live URL in hand, you hold proof of competence that outshines a generic degree. Let's finish this milestone so we can leverage it in outbound messages.`;
+        } else if (lower.includes('github') || lower.includes('resume') || lower.includes('recruiter') || lower.includes('job')) {
+          reply = "For non-traditional candidates, avoid academic CV layouts. Lead with a 'Featured Production Shipments' section containing direct clickable URLs and 1-line impact summaries. When messaging founders on LinkedIn, reference a specific feature in their product and show how your project tackles a related architectural challenge.";
+        } else if (lower.includes('interview')) {
+          reply = "In behavioral interviews, reframe your non-traditional path as your greatest superpower: 'I chose an intensive, outcome-driven 90-day trajectory because I thrive by shipping software and solving real problems autonomously.' That immediately signals high agency to engineering leaders.";
+        } else {
+          reply = `Elena here. We are targeting your primary goal of "${userData?.goal || 'landing a high-leverage role'}". Every completed task in ${activeBlock.label} adds undeniable weight to your portfolio. What career or positioning hurdle can we solve today?`;
+        }
       } else {
-        reply = `You're currently working through ${activeBlock.label} (${activeBlock.title}). Remember that small, consistent 2-hour daily sessions compound dramatically over 90 days. Keep focused on completing the verifiable milestone tasks! What specific blocker can we tackle right now?`;
+        // Alex Chen — Technical Architect
+        if (lower.includes('stuck') || lower.includes('flexbox') || lower.includes('grid') || lower.includes('bug') || lower.includes('error')) {
+          reply = `Technical blocker? Let's isolate it methodically. In ${activeBlock.title}, 90% of issues stem from container sizing or state mismatches. Open your DevTools, inspect the computed box model or console traces, and isolate whether the breakdown is data fetching or CSS layout. What exact behavior are you seeing?`;
+        } else if (lower.includes('github') || lower.includes('repo') || lower.includes('commit') || lower.includes('code')) {
+          reply = "Architecture rule #1: write atomic commits. Instead of 'updated files', use 'feat: implement responsive grid' or 'fix: handle promise rejection in api call'. Add automated test scripts in your package.json so recruiters see you value code reliability.";
+        } else if (lower.includes('interview') || lower.includes('questions')) {
+          reply = `Here are 3 architectural questions for ${activeBlock.title}:\n1. How do you prevent unnecessary re-renders in component hierarchies?\n2. What is the difference between synchronous execution and microtask queues in the event loop?\n3. How would you handle network failure gracefully for offline users?\nWhich one would you like to dissect?`;
+        } else {
+          reply = `Alex Chen here. Looking at your ${activeBlock.label} sprint (${activeBlock.title}): your core technical deliverable is "${activeBlock.milestone}". Keep your functions pure and write unit tests for your edge cases. What technical topic are we tackling?`;
+        }
       }
     }
 

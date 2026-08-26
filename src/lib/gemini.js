@@ -19,75 +19,94 @@ export const isAIEnabled = () => {
 };
 
 /**
- * Generate a 90-day roadmap from user intake data
+ * Generate a specialized 90-day roadmap from user intake data
  */
 export async function generateRoadmap(userData) {
   const m = getModel();
   if (!m) return null;
 
-  const prompt = `You are an expert career coach. Generate a 90-day learning roadmap for someone with the following profile:
-- Status: ${userData.status}
-- Goal: ${userData.goal}
-- Field of Interest: ${userData.interest || 'not specified'}
-- Hours available per week: ${userData.hours}
-- Budget: ${userData.budget}
+  const prompt = `You are PathForward's lead career architect. Generate a rigorous, highly actionable 90-day learning roadmap (6 two-week sprints) for someone with this profile:
+- Status: ${userData.status || 'Self-directed learner'}
+- Goal: ${userData.goal || 'Land job'}
+- Field of Interest: ${userData.interest || 'webdev'}
+- Hours available per week: ${userData.hours || '20'}
+- Budget: ${userData.budget || 'free'}
 
-Return ONLY a JSON array of exactly 6 blocks (2 weeks each), following this exact format:
+Return ONLY a JSON array of exactly 6 blocks (2 weeks each), following this exact schema:
 [
   {
     "id": 1,
     "label": "Wk 1–2",
-    "title": "Block title here",
-    "milestone": "One sentence describing the key outcome",
+    "title": "Clear sprint title",
+    "milestone": "Concrete verifiable milestone outcome (e.g. publish live URL, deploy backend, ship Figma system)",
     "tasks": [
-      {"id": "a", "text": "Specific actionable task", "done": false},
-      {"id": "b", "text": "Another task", "done": false},
-      {"id": "c", "text": "Optional 3rd task", "done": false}
+      {"id": "s1_a", "text": "Specific actionable task", "done": false},
+      {"id": "s1_b", "text": "Another actionable task", "done": false},
+      {"id": "s1_c", "text": "Another actionable task", "done": false}
     ],
-    "resource": {"name": "Free resource name", "url": "https://actual-url.com"},
+    "resource": {"name": "Reputable free resource name", "url": "https://valid-url.com"},
     "active": false
   }
 ]
-Set "active": true only on block 1. Return ONLY the JSON array, no markdown, no explanation.`;
+Set "active": true ONLY on block 1. Return ONLY valid JSON array with NO markdown fences and NO commentary.`;
 
   try {
     const result = await m.generateContent(prompt);
     const text = result.response.text().trim();
-    // Strip markdown code fences if present
     const clean = text.replace(/^```json?\n?/, '').replace(/\n?```$/, '').trim();
-    return JSON.parse(clean);
+    const parsed = JSON.parse(clean);
+    if (Array.isArray(parsed) && parsed.length === 6) {
+      return parsed;
+    }
+    return null;
   } catch (e) {
-    console.error('Gemini roadmap error:', e);
+    console.error('Gemini roadmap generation error:', e);
     return null;
   }
 }
 
 /**
- * Send a chat message to the AI mentor with full roadmap context
+ * Send a chat message to the specialized AI mentor persona with full roadmap context
  */
-export async function sendMentorMessage(userMessage, roadmapBlocks, chatHistory) {
+export async function sendMentorMessage(userMessage, roadmapBlocks = [], chatHistory = [], persona = 'alex', userContext = null) {
   const m = getModel();
   if (!m) return null;
 
+  const activeBlock = roadmapBlocks.find(b => b.active) || roadmapBlocks[0];
   const roadmapSummary = roadmapBlocks.map(b => {
     const doneTasks = b.tasks.filter(t => t.done).length;
     return `Block ${b.id} (${b.label} — ${b.title}): ${doneTasks}/${b.tasks.length} tasks done. Milestone: ${b.milestone}`;
   }).join('\n');
 
-  const systemContext = `You are PathForward, an expert AI career mentor. You are helping a user follow their personalized 90-day learning roadmap. Always give concise, practical, encouraging advice that is SPECIFICALLY tied to their roadmap. Never give generic advice.
+  const personaInstruction = persona === 'elena'
+    ? `You are Elena Rostova, Executive Career Strategist at PathForward. You specialize in non-traditional career navigation (dropouts, fresh graduates without offers, gap year career switchers). You help learners overcome the "no degree" credential barrier by translating completed sprint milestones into proof-of-work, crafting cold outreach messages to startup founders, and maintaining high confidence.`
+    : `You are Alex Chen, Principal Technical Architect at PathForward. You specialize in software engineering architecture, clean code, Git practices, debugging, and building production-grade projects. You provide practical, technical, and concrete engineering guidance tied to the user's active sprint.`;
 
-Current Roadmap:
+  const systemContext = `${personaInstruction}
+
+User Profile:
+- Status: ${userContext?.status || 'Self-directed learner'}
+- Primary Objective: ${userContext?.goal || 'Get a job'}
+- Field of Interest: ${userContext?.interest || 'Web Development'}
+- Active Sprint: ${activeBlock ? `${activeBlock.label}: ${activeBlock.title}` : 'Sprint 1'}
+- Current Milestone: ${activeBlock?.milestone || 'In progress'}
+
+Full 90-Day Roadmap Trajectory:
 ${roadmapSummary}
 
-Keep responses under 100 words. Be warm, direct, and specific.`;
+Guidelines:
+- Give concise, punchy, tactical guidance (under 120 words).
+- Speak directly in your distinct persona voice.
+- Always tie advice back to the user's active sprint milestone and actionable next steps.
+- If the user feels stuck, provide a concrete 3-step action plan.`;
 
   try {
     const chat = m.startChat({
       history: [
         { role: 'user', parts: [{ text: systemContext }] },
-        { role: 'model', parts: [{ text: "I'm your PathForward mentor, fully aware of your 90-day roadmap. How can I help?" }] },
+        { role: 'model', parts: [{ text: `I am ${persona === 'elena' ? 'Elena' : 'Alex'}, fully synced with your 90-day roadmap and active sprint milestone. Let's make progress.` }] },
         ...chatHistory.slice(-6).filter(h => h.role !== 'system').map(h => ({
-          role: h.role === 'mentor' ? 'model' : 'user',
+          role: h.role === 'ai' ? 'model' : 'user',
           parts: [{ text: h.text }]
         }))
       ]
