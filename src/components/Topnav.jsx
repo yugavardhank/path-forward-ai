@@ -9,7 +9,7 @@ export default function Topnav() {
   return (
     <header className="ref-nav">
       {/* Left: Brand Logo */}
-      <div className="ref-logo" onClick={() => navigate('/')}>
+      <div className="ref-logo" role="button" tabIndex={0} aria-label="PathForward Home" onClick={() => navigate('/')} onKeyDown={(e) => e.key === 'Enter' && navigate('/')}>
         <div className="ref-logo-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" stroke="#f25a38" strokeWidth="2.5" />
@@ -21,7 +21,7 @@ export default function Topnav() {
       </div>
 
       {/* Center: Navigation Links with clean responsive labels */}
-      <nav className="ref-nav-links">
+      <nav className="ref-nav-links" aria-label="Main Navigation">
         <button
           className={`ref-nav-link ${path === '/' ? 'active' : ''}`}
           onClick={() => navigate('/')}
@@ -61,11 +61,12 @@ export default function Topnav() {
             type="text"
             className="ref-search-input"
             placeholder="Search milestones..."
+            aria-label="Search roadmap milestones"
             onKeyDown={(e) => {
               if (e.key === 'Enter') navigate('/roadmap');
             }}
           />
-          <button className="ref-search-btn" aria-label="Search" onClick={() => navigate('/roadmap')}>
+          <button className="ref-search-btn" aria-label="Submit search query" onClick={() => navigate('/roadmap')}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"/>
               <line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -77,6 +78,7 @@ export default function Topnav() {
         {path !== '/intake' && (
           <button
             className="ref-nav-cta-btn"
+            aria-label="Build customized 90-day plan"
             onClick={() => navigate('/intake')}
           >
             <span>Build Plan →</span>
@@ -84,10 +86,22 @@ export default function Topnav() {
         )}
 
         {/* User Profile Avatar */}
-        <div className="ref-user-avatar" onClick={() => navigate('/intake')} title="Profile & Goals">
+        <div
+          className="ref-user-avatar"
+          role="button"
+          tabIndex={0}
+          aria-label="User Profile and Goals setup"
+          onClick={() => navigate('/intake')}
+          onKeyDown={(e) => e.key === 'Enter' && navigate('/intake')}
+          title="Profile & Goals"
+        >
           <img
             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-            alt="User profile"
+            alt="User profile avatar"
+            width="34"
+            height="34"
+            loading="lazy"
+            decoding="async"
           />
         </div>
       </div>

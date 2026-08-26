@@ -96,20 +96,26 @@ export default function Roadmap() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 6, background: '#f8fafc', padding: 4, borderRadius: 999, border: '1px solid #e2e8f0' }}>
+          <div style={{ display: 'flex', gap: 6, background: '#f8fafc', padding: 4, borderRadius: 999, border: '1px solid #e2e8f0' }} role="group" aria-label="Filter sprint blocks">
             <button
+              type="button"
+              aria-pressed={filter === 'all'}
               onClick={() => setFilter('all')}
               style={{ padding: '6px 14px', borderRadius: 999, fontSize: 11.5, fontWeight: 600, background: filter === 'all' ? '#1e2430' : 'transparent', color: filter === 'all' ? '#ffffff' : '#64748b' }}
             >
               All 6 Sprints
             </button>
             <button
+              type="button"
+              aria-pressed={filter === 'active'}
               onClick={() => setFilter('active')}
               style={{ padding: '6px 14px', borderRadius: 999, fontSize: 11.5, fontWeight: 600, background: filter === 'active' ? '#1e2430' : 'transparent', color: filter === 'active' ? '#ffffff' : '#64748b' }}
             >
               Active Phase
             </button>
             <button
+              type="button"
+              aria-pressed={filter === 'completed'}
               onClick={() => setFilter('completed')}
               style={{ padding: '6px 14px', borderRadius: 999, fontSize: 11.5, fontWeight: 600, background: filter === 'completed' ? '#1e2430' : 'transparent', color: filter === 'completed' ? '#ffffff' : '#64748b' }}
             >
@@ -178,7 +184,17 @@ export default function Roadmap() {
                     {block.tasks.map(task => (
                       <div
                         key={task.id}
+                        role="checkbox"
+                        aria-checked={task.done}
+                        tabIndex={0}
+                        aria-label={task.text}
                         onClick={() => toggle(block.id, task.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === ' ' || e.key === 'Enter') {
+                            e.preventDefault();
+                            toggle(block.id, task.id);
+                          }
+                        }}
                         style={{
                           display: 'flex',
                           alignItems: 'center',

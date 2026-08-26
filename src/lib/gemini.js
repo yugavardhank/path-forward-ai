@@ -59,8 +59,7 @@ Set "active": true ONLY on block 1. Return ONLY valid JSON array with NO markdow
       return parsed;
     }
     return null;
-  } catch (e) {
-    console.error('Gemini roadmap generation error:', e);
+  } catch {
     return null;
   }
 }
@@ -113,8 +112,7 @@ Guidelines:
     });
     const result = await chat.sendMessage(userMessage);
     return result.response.text();
-  } catch (e) {
-    console.error('Gemini chat error:', e);
+  } catch {
     return null;
   }
 }

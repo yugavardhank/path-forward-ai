@@ -292,6 +292,7 @@ export default function MentorStudio() {
             >
               <input
                 type="text"
+                aria-label="Ask your AI mentor a question"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask Alex or Elena anything about your roadmap, code, or career steps..."
@@ -300,6 +301,7 @@ export default function MentorStudio() {
               />
               <button
                 type="submit"
+                aria-label="Send message to mentor"
                 disabled={!input.trim() || loading}
                 style={{
                   width: 32,

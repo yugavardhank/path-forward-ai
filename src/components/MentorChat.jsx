@@ -175,12 +175,13 @@ export default function MentorChat({ blocks = [], initialOpen = false }) {
         <form onSubmit={e => { e.preventDefault(); send(input); }} className="chat-input-row">
           <input
             className="chat-input"
+            aria-label="Ask your AI Mentor a question"
             value={input}
             onChange={e => setInput(e.target.value)}
             placeholder="Ask about your milestones, code, or tasks..."
             disabled={typing}
           />
-          <button type="submit" className="chat-send" disabled={!input.trim() || typing}>
+          <button type="submit" className="chat-send" aria-label="Send message to mentor" disabled={!input.trim() || typing}>
             <SendIcon />
           </button>
         </form>
